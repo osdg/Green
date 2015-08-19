@@ -55,7 +55,7 @@ public class Browser implements Initializable {
     private void gotoUrl() {
         String url = tfUrlInputField.getText();
         if (!TextUtil.isEmpty(url)) {
-            if (!url.startsWith("http://")) {
+            if (!url.startsWith("http://")&&!url.startsWith("https://")) {
                 url = "http://" + url;
             }
 
