@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebHistory;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -16,24 +18,32 @@ import org.osdg.green.views.ViewLoader;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class Browser implements Initializable{
+public class Browser implements Initializable {
 
     public TextField tfUrlInputField;
     public WebView webView;
+    public VBox root;
 
-    public static void show(){
+    public static void show() {
         Parent root = ViewLoader.loadView("Browser.fxml");
         Stage stage = new Stage();
         stage.setTitle("Green browser");
-        stage.setScene(new Scene(root,1000,700));
+        stage.setScene(new Scene(root, 1022, 680));
         stage.show();
     }
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        webView.getEngine().locationProperty().addListener((observable, oldValue, newValue) -> {
+
+        WebEngine engine = webView.getEngine();
+
+        engine.locationProperty().addListener((observable, oldValue, newValue) -> {
             tfUrlInputField.setText(newValue);
+        });
+
+        engine.titleProperty().addListener((observable, oldValue, newValue) -> {
+            ((Stage) root.getScene().getWindow()).setTitle(newValue);
         });
     }
 
@@ -42,11 +52,11 @@ public class Browser implements Initializable{
         gotoUrl();
     }
 
-    private void gotoUrl(){
+    private void gotoUrl() {
         String url = tfUrlInputField.getText();
-        if (!TextUtil.isEmpty(url)){
-            if (!url.startsWith("http://")){
-                url = "http://"+url;
+        if (!TextUtil.isEmpty(url)) {
+            if (!url.startsWith("http://")) {
+                url = "http://" + url;
             }
 
             webView.getEngine().load(url);
@@ -59,14 +69,14 @@ public class Browser implements Initializable{
 
 
     public void tfUrlInputFieldKeyPressedHandler(KeyEvent event) {
-        if (event.getCode()== KeyCode.ENTER){
+        if (event.getCode() == KeyCode.ENTER) {
             gotoUrl();
         }
     }
 
     public void btnBackClickedHandler(ActionEvent actionEvent) {
         WebHistory history = webView.getEngine().getHistory();
-        if (history.getCurrentIndex()>0) {
+        if (history.getCurrentIndex() > 0) {
             history.go(-1);
         }
     }
